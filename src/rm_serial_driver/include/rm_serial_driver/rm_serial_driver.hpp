@@ -25,6 +25,9 @@
 #include "auto_aim_interfaces/msg/target.hpp"
 #include "auto_aim_interfaces/msg/send_serial.hpp"
 #include "auto_aim_interfaces/msg/receive_serial.hpp"
+#include "packet.hpp"
+#include "auto_aim_interfaces/msg/nuc.hpp"
+
 
 namespace rm_serial_driver
 {
@@ -38,11 +41,9 @@ public:
 private:
   void getParams();
 
-  void receiveData();
+  void receiveData(auto_aim_interfaces::msg::Nuc msg);
 
   void sendData(auto_aim_interfaces::msg::SendSerial msg);
-
-  void reopenPort();
 
   void setParam(const rclcpp::Parameter & param);
 
@@ -74,13 +75,14 @@ private:
 
   rclcpp::Subscription<auto_aim_interfaces::msg::Target>::SharedPtr target_sub_;
   rclcpp::Subscription<auto_aim_interfaces::msg::SendSerial>::SharedPtr result_sub_;
-
+  rclcpp::Subscription<auto_aim_interfaces::msg::Nuc>::SharedPtr msg_sub_;
   // For debug usage
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr latency_pub_;
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
-  rclcpp::Publisher<auto_aim_interfaces::msg::ReceiveSerial>::SharedPtr serial_pub_;
 
-  std::thread receive_thread_;
+  rclcpp::Publisher<auto_aim_interfaces::msg::ReceiveSerial>::SharedPtr serial_pub_;
+  //publish packet to another nuc
+  rclcpp::Publisher<auto_aim_interfaces::msg::SendSerial>::SharedPtr msg_pub_;
 
   int closecount=0;
 };

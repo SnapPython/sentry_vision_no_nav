@@ -22,6 +22,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/TrackerInfo.msg"
   "msg/SendSerial.msg"
   "msg/ReceiveSerial.msg"
+  "msg/Nuc.msg"
 
   "msg/Bias.msg"
 
