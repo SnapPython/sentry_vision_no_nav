@@ -54,32 +54,32 @@ inline float z_0(float vz0, float z0, float randa,float alpha,float beta, float 
 }
 
 
-Trajectoryer::Trajectoryer() : Node("trajectory")
+Trajectoryer::Trajectoryer() : Node("trajectory2")
 {
     parameters_init();
 
     tf2_init();
 
     target_sub_ = this->create_subscription<auto_aim_interfaces::msg::Target>(
-                  "/tracker/target", rclcpp::SensorDataQoS(), std::bind(&Trajectoryer::target_callback, this, std::placeholders::_1));
+                  "/tracker2/target", rclcpp::SensorDataQoS(), std::bind(&Trajectoryer::target_callback, this, std::placeholders::_1));
 
     angle_sub_ = this->create_subscription<auto_aim_interfaces::msg::ReceiveSerial>(
-        "/angle/init", 10, std::bind(&Trajectoryer::angle_callback, this, std::placeholders::_1));
+        "/angle2/init", 10, std::bind(&Trajectoryer::angle_callback, this, std::placeholders::_1));
 
     changeyaw_sub_ = this->create_subscription<auto_aim_interfaces::msg::Bias>(
-        "/trajectory/changeyaw", 10, std::bind(&Trajectoryer::changeyaw_callback, this, std::placeholders::_1));
+        "/trajectory2/changeyaw", 10, std::bind(&Trajectoryer::changeyaw_callback, this, std::placeholders::_1));
     
     maker_pub_ = this->create_publisher<visualization_msgs::msg::Marker>(
-        "/aiming_point", 10);
+        "/aiming_point2", 10);
 
     result_pub_ = this->create_publisher<auto_aim_interfaces::msg::SendSerial>(
-        "/trajectory/result", 10);
+        "/trajectory2/result", 10);
     
     needpose_pub_ = this->create_publisher<geometry_msgs::msg::PointStamped>(
-        "/trajectory/needpose", 10);
+        "/trajectory2/needpose", 10);
 
     armorpose_pub_ = this->create_publisher<geometry_msgs::msg::PointStamped>(
-        "/trajectory/armorpose", 10);
+        "/trajectory2/armorpose", 10);
 
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
    //timer_ = this->create_wall_timer(5s, std::bind(&Trajectoryer::test,this));

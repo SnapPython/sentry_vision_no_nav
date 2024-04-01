@@ -33,10 +33,10 @@
 namespace rm_auto_aim
 {
 
-class ArmorDetectorNode : public rclcpp::Node
+class ArmorDetectorNode2 : public rclcpp::Node
 {
 public:
-  ArmorDetectorNode(const rclcpp::NodeOptions & options);
+  ArmorDetectorNode2(const rclcpp::NodeOptions & options);
 
 private:
   void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr img_msg);

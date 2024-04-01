@@ -28,8 +28,8 @@
 
 namespace rm_auto_aim
 {
-ArmorDetectorNode::ArmorDetectorNode(const rclcpp::NodeOptions & options)
-: Node("armor_detector", options)
+ArmorDetectorNode2::ArmorDetectorNode2(const rclcpp::NodeOptions & options)
+: Node("armor_detector2", options)
 {
   RCLCPP_INFO(this->get_logger(), "Starting DetectorNode!");
 
@@ -38,7 +38,7 @@ ArmorDetectorNode::ArmorDetectorNode(const rclcpp::NodeOptions & options)
 
   // Armors Publisher
   armors_pub_ = this->create_publisher<auto_aim_interfaces::msg::Armors>(
-    "/detector/armors", rclcpp::SensorDataQoS());
+    "/detector2/armors", rclcpp::SensorDataQoS());
 
   // Visualization Marker Publisher
   // See http://wiki.ros.org/rviz/DisplayTypes/Marker
@@ -63,9 +63,9 @@ ArmorDetectorNode::ArmorDetectorNode(const rclcpp::NodeOptions & options)
   text_marker_.lifetime = rclcpp::Duration::from_seconds(0.1);
 
   marker_pub_ =
-    this->create_publisher<visualization_msgs::msg::MarkerArray>("/detector/marker", 10);
+    this->create_publisher<visualization_msgs::msg::MarkerArray>("/detector2/marker", 10);
 
-  changeyaw_pub = this->create_publisher<auto_aim_interfaces::msg::Bias>("/trajectory/changeyaw", 10);
+  changeyaw_pub = this->create_publisher<auto_aim_interfaces::msg::Bias>("/trajectory2/changeyaw", 10);
 
   // Debug Publishers
   debug_ = this->declare_parameter("debug", false);
@@ -83,7 +83,7 @@ ArmorDetectorNode::ArmorDetectorNode(const rclcpp::NodeOptions & options)
 
   cam_info_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>(
     // "/camera/camera_info", rclcpp::SensorDataQoS(),
-    "/camera_info", rclcpp::SensorDataQoS(),
+    "/camera_info2", rclcpp::SensorDataQoS(),
     [this](sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info) {
       //cam_center_ = cv::Point2f(camera_info->k[2], camera_info->k[5]);
       //cam_center_ = cv::Point2f(320, 240);
@@ -100,17 +100,17 @@ ArmorDetectorNode::ArmorDetectorNode(const rclcpp::NodeOptions & options)
 
   img_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
     // "/camera/image_color", rclcpp::SensorDataQoS(),
-    "/image_raw", rclcpp::SensorDataQoS(),
-    std::bind(&ArmorDetectorNode::imageCallback, this, std::placeholders::_1));
+    "/image_raw2", rclcpp::SensorDataQoS(),
+    std::bind(&ArmorDetectorNode2::imageCallback, this, std::placeholders::_1));
 
-  needpose_sub_ = this->create_subscription<geometry_msgs::msg::PointStamped>("/tracker/needpose", 10,
-    std::bind(&ArmorDetectorNode::needposeCallback, this, std::placeholders::_1));
+  needpose_sub_ = this->create_subscription<geometry_msgs::msg::PointStamped>("/tracker2/needpose", 10,
+    std::bind(&ArmorDetectorNode2::needposeCallback, this, std::placeholders::_1));
 
-  armorpose_sub_ = this->create_subscription<geometry_msgs::msg::PointStamped>("/tracker/armorpose", 10,
-    std::bind(&ArmorDetectorNode::armorposeCallback, this, std::placeholders::_1));
+  armorpose_sub_ = this->create_subscription<geometry_msgs::msg::PointStamped>("/tracker2/armorpose", 10,
+    std::bind(&ArmorDetectorNode2::armorposeCallback, this, std::placeholders::_1));
 }
 
-void ArmorDetectorNode::imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr img_msg)
+void ArmorDetectorNode2::imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr img_msg)
 {
   auto armors = detectArmors(img_msg);
 
@@ -180,7 +180,7 @@ void ArmorDetectorNode::imageCallback(const sensor_msgs::msg::Image::ConstShared
   }
 }
 
-void ArmorDetectorNode::needposeCallback(const geometry_msgs::msg::PointStamped::SharedPtr needpose_ptr)
+void ArmorDetectorNode2::needposeCallback(const geometry_msgs::msg::PointStamped::SharedPtr needpose_ptr)
 {
   needpose = cv::Point3f(needpose_ptr->point.x,needpose_ptr->point.y,needpose_ptr->point.z);
   cv::Mat needpose_mat = cv::Mat::zeros(3,1,CV_64FC1);
@@ -201,7 +201,7 @@ void ArmorDetectorNode::needposeCallback(const geometry_msgs::msg::PointStamped:
   std::cout << "needpose_img.y : " << needpose_img.y << std::endl;*/
 }
 
-void ArmorDetectorNode::armorposeCallback(const geometry_msgs::msg::PointStamped::SharedPtr armorpose_ptr)
+void ArmorDetectorNode2::armorposeCallback(const geometry_msgs::msg::PointStamped::SharedPtr armorpose_ptr)
 {
   cv::Mat prediction_armorpose_mat = cv::Mat::zeros(3,1,CV_64FC1);
   prediction_armorpose_mat.at<double>(0,0) = armorpose_ptr->point.x;
@@ -226,7 +226,7 @@ void ArmorDetectorNode::armorposeCallback(const geometry_msgs::msg::PointStamped
   std::cout << "needpose_img.y : " << needpose_img.y << std::endl;*/
 }
 
-void ArmorDetectorNode::getarmorpose()
+void ArmorDetectorNode2::getarmorpose()
 {
   /*cv::Mat armorpose_mat = cv::Mat::zeros(3,1,CV_64FC1);
   armorpose_mat.at<double>(0,0) = armorpose_ptr->point.x;
@@ -251,7 +251,7 @@ void ArmorDetectorNode::getarmorpose()
   std::cout << "needpose_img.y : " << needpose_img.y << std::endl;*/
 }
 
-void ArmorDetectorNode::is_need_change()
+void ArmorDetectorNode2::is_need_change()
 {
   if(armorpose.x !=0 && armorpose.y !=0 && needpose.x !=0 && needpose.y !=0)
   {
@@ -312,7 +312,7 @@ void ArmorDetectorNode::is_need_change()
 
 //}  // namespace rm_auto_aim
 
-std::unique_ptr<Detector> ArmorDetectorNode::initDetector()
+std::unique_ptr<Detector> ArmorDetectorNode2::initDetector()
 {
   rcl_interfaces::msg::ParameterDescriptor param_desc;
   param_desc.integer_range.resize(1);
@@ -354,7 +354,7 @@ std::unique_ptr<Detector> ArmorDetectorNode::initDetector()
   return detector;
 }
 
-std::vector<Armor> ArmorDetectorNode::detectArmors(
+std::vector<Armor> ArmorDetectorNode2::detectArmors(
   const sensor_msgs::msg::Image::ConstSharedPtr & img_msg)
 {
   // Convert ROS img to cv::Mat
@@ -423,19 +423,19 @@ std::vector<Armor> ArmorDetectorNode::detectArmors(
   return armors;
 }
 
-void ArmorDetectorNode::createDebugPublishers()
+void ArmorDetectorNode2::createDebugPublishers()
 {
   lights_data_pub_ =
-    this->create_publisher<auto_aim_interfaces::msg::DebugLights>("/detector/debug_lights", 10);
+    this->create_publisher<auto_aim_interfaces::msg::DebugLights>("/detector2/debug_lights", 10);
   armors_data_pub_ =
-    this->create_publisher<auto_aim_interfaces::msg::DebugArmors>("/detector/debug_armors", 10);
+    this->create_publisher<auto_aim_interfaces::msg::DebugArmors>("/detector2/debug_armors", 10);
 
-  binary_img_pub_ = image_transport::create_publisher(this, "/detector/binary_img");
-  number_img_pub_ = image_transport::create_publisher(this, "/detector/number_img");
-  result_img_pub_ = image_transport::create_publisher(this, "/detector/result_img");
+  binary_img_pub_ = image_transport::create_publisher(this, "/detector2/binary_img");
+  number_img_pub_ = image_transport::create_publisher(this, "/detector2/number_img");
+  result_img_pub_ = image_transport::create_publisher(this, "/detector2/result_img");
 }
 
-void ArmorDetectorNode::destroyDebugPublishers()
+void ArmorDetectorNode2::destroyDebugPublishers()
 {
   lights_data_pub_.reset();
   armors_data_pub_.reset();
@@ -445,7 +445,7 @@ void ArmorDetectorNode::destroyDebugPublishers()
   result_img_pub_.shutdown();
 }
 
-void ArmorDetectorNode::publishMarkers()
+void ArmorDetectorNode2::publishMarkers()
 {
   using Marker = visualization_msgs::msg::Marker;
   armor_marker_.action = armors_msg_.armors.empty() ? Marker::DELETE : Marker::ADD;
@@ -460,4 +460,4 @@ void ArmorDetectorNode::publishMarkers()
 // Register the component with class_loader.
 // This acts as a sort of entry point, allowing the component to be discoverable when its library
 // is being loaded into a running process.
-RCLCPP_COMPONENTS_REGISTER_NODE(rm_auto_aim::ArmorDetectorNode)
+RCLCPP_COMPONENTS_REGISTER_NODE(rm_auto_aim::ArmorDetectorNode2)

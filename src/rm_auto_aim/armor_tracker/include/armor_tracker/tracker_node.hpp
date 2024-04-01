@@ -30,10 +30,10 @@
 namespace rm_auto_aim
 {
 using tf2_filter = tf2_ros::MessageFilter<auto_aim_interfaces::msg::Armors>;
-class ArmorTrackerNode : public rclcpp::Node
+class ArmorTrackerNode2 : public rclcpp::Node
 {
 public:
-  explicit ArmorTrackerNode(const rclcpp::NodeOptions & options);
+  explicit ArmorTrackerNode2(const rclcpp::NodeOptions & options);
 
 private:
   void armorsCallback(const auto_aim_interfaces::msg::Armors::SharedPtr armors_ptr);

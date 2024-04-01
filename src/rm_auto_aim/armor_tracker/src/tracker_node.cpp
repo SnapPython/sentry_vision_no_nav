@@ -7,8 +7,8 @@
 
 namespace rm_auto_aim
 {
-ArmorTrackerNode::ArmorTrackerNode(const rclcpp::NodeOptions & options)
-: Node("armor_tracker", options)
+ArmorTrackerNode2::ArmorTrackerNode2(const rclcpp::NodeOptions & options)
+: Node("armor_tracker2", options)
 {
   RCLCPP_INFO(this->get_logger(), "Starting TrackerNode!");
 
@@ -117,7 +117,7 @@ ArmorTrackerNode::ArmorTrackerNode(const rclcpp::NodeOptions & options)
   using std::placeholders::_2;
   using std::placeholders::_3;
   reset_tracker_srv_ = this->create_service<std_srvs::srv::Trigger>(
-    "/tracker/reset", [this](
+    "/tracker2/reset", [this](
                         const std_srvs::srv::Trigger::Request::SharedPtr,
                         std_srvs::srv::Trigger::Response::SharedPtr response) {
       tracker_->tracker_state = Tracker::LOST;
@@ -136,9 +136,9 @@ ArmorTrackerNode::ArmorTrackerNode(const rclcpp::NodeOptions & options)
   tf2_buffer_->setCreateTimerInterface(timer_interface);
   tf2_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf2_buffer_);
   // subscriber and filter
-  armors_sub_.subscribe(this, "/detector/armors", rmw_qos_profile_sensor_data);
-  needpose_sub_.subscribe(this, "/trajectory/needpose", rmw_qos_profile_sensor_data);
-  armorpose_sub_.subscribe(this, "/trajectory/armorpose", rmw_qos_profile_sensor_data);
+  armors_sub_.subscribe(this, "/detector2/armors", rmw_qos_profile_sensor_data);
+  needpose_sub_.subscribe(this, "/trajectory2/needpose", rmw_qos_profile_sensor_data);
+  armorpose_sub_.subscribe(this, "/trajectory2/armorpose", rmw_qos_profile_sensor_data);
   target_frame_ = this->declare_parameter("target_frame", "odom");
   needpose_target_frame_ = "prediction_camera_optical_frame";
   armorpose_target_frame_ = "prediction_camera_optical_frame";
@@ -154,22 +154,22 @@ ArmorTrackerNode::ArmorTrackerNode(const rclcpp::NodeOptions & options)
     armorpose_sub_, *tf2_buffer_, armorpose_target_frame_, 100, this->get_node_logging_interface(),
     this->get_node_clock_interface(), std::chrono::duration<int>(1));
   // Register a callback with tf2_ros::MessageFilter to be called when transforms are available
-  tf2_filter_->registerCallback(&ArmorTrackerNode::armorsCallback, this);
-  needpose_tf2_filter_->registerCallback(&ArmorTrackerNode::needposeCallback, this);
-  armorpose_tf2_filter_->registerCallback(&ArmorTrackerNode::armorposeCallback, this);
+  tf2_filter_->registerCallback(&ArmorTrackerNode2::armorsCallback, this);
+  needpose_tf2_filter_->registerCallback(&ArmorTrackerNode2::needposeCallback, this);
+  armorpose_tf2_filter_->registerCallback(&ArmorTrackerNode2::armorposeCallback, this);
 
   // Measurement publisher (for debug usage)
-  info_pub_ = this->create_publisher<auto_aim_interfaces::msg::TrackerInfo>("/tracker/info", 10);
+  info_pub_ = this->create_publisher<auto_aim_interfaces::msg::TrackerInfo>("/tracker2/info", 10);
 
   // Publisher
   target_pub_ = this->create_publisher<auto_aim_interfaces::msg::Target>(
-    "/tracker/target", rclcpp::SensorDataQoS());
+    "/tracker2/target", rclcpp::SensorDataQoS());
 
     needpose_pub_ = this->create_publisher<geometry_msgs::msg::PointStamped>(
-    "/tracker/needpose", 100);
+    "/tracker2/needpose", 100);
 
     armorpose_pub_ = this->create_publisher<geometry_msgs::msg::PointStamped>(
-    "/tracker/armorpose", 100);
+    "/tracker2/armorpose", 100);
 
   // Visualization Marker Publisher
   // See http://wiki.ros.org/rviz/DisplayTypes/Marker
@@ -201,7 +201,7 @@ ArmorTrackerNode::ArmorTrackerNode(const rclcpp::NodeOptions & options)
   marker_pub_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("/tracker/marker", 10);
 }
 
-void ArmorTrackerNode::armorsCallback(const auto_aim_interfaces::msg::Armors::SharedPtr armors_msg)
+void ArmorTrackerNode2::armorsCallback(const auto_aim_interfaces::msg::Armors::SharedPtr armors_msg)
 {
   // Tranform armor position from image frame to world coordinate
   for (auto & armor : armors_msg->armors) {
@@ -297,7 +297,7 @@ void ArmorTrackerNode::armorsCallback(const auto_aim_interfaces::msg::Armors::Sh
   publishMarkers(target_msg);
 }
 
-void ArmorTrackerNode::needposeCallback(const geometry_msgs::msg::PointStamped::SharedPtr needpose)
+void ArmorTrackerNode2::needposeCallback(const geometry_msgs::msg::PointStamped::SharedPtr needpose)
 {
   if(tf2_buffer_->canTransform("horizom_gimbal_link", "prediction_camera_optical_frame", tf2::TimePointZero)){
       //std::cout << "Frames can be transformed" << std::endl;
@@ -318,7 +318,7 @@ void ArmorTrackerNode::needposeCallback(const geometry_msgs::msg::PointStamped::
   needpose_pub_->publish(ps);
 }
 
-void ArmorTrackerNode::armorposeCallback(const geometry_msgs::msg::PointStamped::SharedPtr armorpose)
+void ArmorTrackerNode2::armorposeCallback(const geometry_msgs::msg::PointStamped::SharedPtr armorpose)
 {
   if(tf2_buffer_->canTransform("horizom_gimbal_link", "camera_optical_frame", tf2::TimePointZero)){
       //std::cout << "Frames can be transformed" << std::endl;
@@ -339,7 +339,7 @@ void ArmorTrackerNode::armorposeCallback(const geometry_msgs::msg::PointStamped:
   armorpose_pub_->publish(armorps);
 }
 
-void ArmorTrackerNode::publishMarkers(const auto_aim_interfaces::msg::Target & target_msg)
+void ArmorTrackerNode2::publishMarkers(const auto_aim_interfaces::msg::Target & target_msg)
 {
   position_marker_.header = target_msg.header;
   linear_v_marker_.header = target_msg.header;
@@ -423,4 +423,4 @@ void ArmorTrackerNode::publishMarkers(const auto_aim_interfaces::msg::Target & t
 // Register the component with class_loader.
 // This acts as a sort of entry point, allowing the component to be discoverable when its library
 // is being loaded into a running process.
-RCLCPP_COMPONENTS_REGISTER_NODE(rm_auto_aim::ArmorTrackerNode)
+RCLCPP_COMPONENTS_REGISTER_NODE(rm_auto_aim::ArmorTrackerNode2)

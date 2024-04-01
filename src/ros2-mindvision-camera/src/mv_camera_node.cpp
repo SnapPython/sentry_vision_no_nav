@@ -78,7 +78,7 @@ public:
     // https://github.com/ros-visualization/rqt/issues/187
     bool use_sensor_data_qos = this->declare_parameter("use_sensor_data_qos", false);
     auto qos = use_sensor_data_qos ? rmw_qos_profile_sensor_data : rmw_qos_profile_default;
-    camera_pub_ = image_transport::create_camera_publisher(this, "image_raw", qos);
+    camera_pub_ = image_transport::create_camera_publisher(this, "image_raw2", qos);
 
     // Load camera info
     camera_name_ = this->declare_parameter("camera_name", "mv_camera");
