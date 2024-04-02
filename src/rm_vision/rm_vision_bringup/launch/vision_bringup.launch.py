@@ -36,7 +36,7 @@ def generate_launch_description():
                 # 配置目标检测节点
                 ComposableNode(
                     package='armor_detector',
-                    plugin='rm_auto_aim::ArmorDetectorNode',
+                    plugin='rm_auto_aim::ArmorDetectorNode2',
                     name='armor_detector',
                     parameters=[node_params],
                     extra_arguments=[{'use_intra_process_comms': True}]
@@ -55,7 +55,7 @@ def generate_launch_description():
         )
 
     hik_camera_node = get_camera_node('hik_camera', 'hik_camera::HikCameraNode')
-    mv_camera_node = get_camera_node('mindvision_camera', 'mindvision_camera::MVCameraNode')
+    mv_camera_node = get_camera_node('mindvision_camera', 'mindvision_camera::MVCameraNode2')
 
     if (launch_params['camera'] == 'hik'):
         cam_detector = get_camera_detector_container(hik_camera_node)

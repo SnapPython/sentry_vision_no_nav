@@ -32,7 +32,7 @@ def generate_launch_description():
                 camera_node,
                 ComposableNode(
                     package='armor_detector',
-                    plugin='rm_auto_aim::ArmorDetectorNode',
+                    plugin='rm_auto_aim::ArmorDetectorNode2',
                     name='armor_detector',
                     parameters=[node_params],
                     extra_arguments=[{'use_intra_process_comms': True}]

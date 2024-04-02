@@ -32,7 +32,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN rm_auto_aim::ArmorDetectorNode
+  PLUGIN rm_auto_aim::ArmorDetectorNode2
   EXECUTABLE armor_detector_node
 )
 

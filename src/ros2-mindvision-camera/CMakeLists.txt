@@ -39,7 +39,7 @@ endif()
 target_link_libraries(${PROJECT_NAME} MVSDK)
 
 rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN mindvision_camera::MVCameraNode
+  PLUGIN mindvision_camera::MVCameraNode2
   EXECUTABLE ${PROJECT_NAME}_node
 )
 

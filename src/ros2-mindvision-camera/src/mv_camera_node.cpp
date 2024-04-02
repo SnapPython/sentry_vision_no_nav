@@ -20,10 +20,10 @@
 
 namespace mindvision_camera
 {
-class MVCameraNode : public rclcpp::Node
+class MVCameraNode2 : public rclcpp::Node
 {
 public:
-  explicit MVCameraNode(const rclcpp::NodeOptions & options) : Node("mv_camera", options)
+  explicit MVCameraNode2(const rclcpp::NodeOptions & options) : Node("mv_camera", options)
   {
     RCLCPP_INFO(this->get_logger(), "Starting MVCameraNode!");
 
@@ -95,7 +95,7 @@ public:
 
     // Add callback to the set parameter event
     params_callback_handle_ = this->add_on_set_parameters_callback(
-      std::bind(&MVCameraNode::parametersCallback, this, std::placeholders::_1));
+      std::bind(&MVCameraNode2::parametersCallback, this, std::placeholders::_1));
 
     capture_thread_ = std::thread{[this]() -> void {
       RCLCPP_INFO(this->get_logger(), "Publishing image!");
@@ -136,7 +136,7 @@ public:
     }};
   }
 
-  ~MVCameraNode() override
+  ~MVCameraNode2() override
   {
     if (capture_thread_.joinable()) {
       capture_thread_.join();
@@ -314,4 +314,4 @@ private:
 // Register the component with class_loader.
 // This acts as a sort of entry point, allowing the component to be discoverable when its library
 // is being loaded into a running process.
-RCLCPP_COMPONENTS_REGISTER_NODE(mindvision_camera::MVCameraNode)
+RCLCPP_COMPONENTS_REGISTER_NODE(mindvision_camera::MVCameraNode2)
