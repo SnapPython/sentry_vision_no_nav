@@ -2,7 +2,8 @@
 
 colcon build --symlink-install 
 cmds=(
-	"ros2 launch rm_vision_bringup vision_bringup.launch.py")
+	"ros2 launch rm_vision_bringup vision_bringup.launch.py"
+	"ros2 launch foxglove_bridge foxglove_bridge_launch.xml")
 
 for cmd in "${cmds[@]}";
 do

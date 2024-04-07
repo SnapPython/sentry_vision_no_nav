@@ -16,11 +16,11 @@
 包含[PnPSolver](#pnpsolver)
 
 订阅：
-- 相机参数 `/camera_info`
-- 彩色图像 `/image_raw`
+- 相机参数 `/camera_info2`
+- 彩色图像 `/image_raw2`
 
 发布：
-- 识别目标 `/detector/armors`
+- 识别目标 `/detector2/armors`
 
 静态参数：
 - 筛选灯条的参数 `light`

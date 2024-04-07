@@ -37,8 +37,8 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options)
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
   // Create Publisher
-  latency_pub_ = this->create_publisher<std_msgs::msg::Float64>("/latency", 10);
-  serial_pub_ = this->create_publisher<auto_aim_interfaces::msg::ReceiveSerial>("/angle/init", 10);
+  latency_pub_ = this->create_publisher<std_msgs::msg::Float64>("/latency2", 10);
+  serial_pub_ = this->create_publisher<auto_aim_interfaces::msg::ReceiveSerial>("/angle2/init", 10);
   msg_pub_ = this->create_publisher<auto_aim_interfaces::msg::SendSerial>("/nuc/send", 10);
 
   // Detect parameter client
@@ -62,7 +62,7 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options)
 
   // Create Subscription
   result_sub_ = this->create_subscription<auto_aim_interfaces::msg::SendSerial>(
-    "/trajectory/result", 10,
+    "/trajectory2/result", 10,
     std::bind(&RMSerialDriver::sendData, this, std::placeholders::_1));
 
   msg_sub_ = this->create_subscription<auto_aim_interfaces::msg::Nuc>("/nuc/receive", 10,
